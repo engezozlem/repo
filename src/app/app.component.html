@@ -1,0 +1,101 @@
+<div class="container-fluid">
+    <div class="header">Enrollment Form</div>
+    <button class="btn btn-danger" [routerLink]="['/navbar']">Go Other Page</button>
+    <div class="alert alert-danger" *ngIf="errorMsg">
+        {{ errorMsg }}
+    </div>
+    <div class="form_framework">
+        <form #userForm="ngForm" *ngIf="!submitted" novalidate (ngSubmit)="onSubmit()">
+
+            <!-- {{ userForm.form.valid }}-->
+            <!--    {{ userForm.value | json }}
+            <br> {{ userModel | json}}-->
+            <!--3.Adım : ngForm directive i eklenmeli(user data tracking için)-->
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" required class="form-control" #name="ngModel" [(ngModel)]="userModel.name" name="userName" [class.is-invalid]="name.invalid && name.touched">
+                <!--4.Adım :Tracklenecek her form elemanına ngModel direktifi eklenmeli. 
+                  ngModel directive'ini kullanmak için name mutlaka yazılmalıdır.  -->
+                <!--    
+                    Track Control State
+                    <div class="form_framework">
+                    <p>Class Name : ng-touched</p>
+                    <p>Value : {{ name.untouched }} </p>
+                    <hr>
+                    <p>Class Name : ng-pristine</p>
+                    <p>Value : {{ name.pristine }}</p>
+                    <hr>
+                    <p>Class Name : ng-invalid</p>
+                    <p>Value : {{ name.invalid }}</p>
+                </div>-->
+
+                <!--Validation  Approach 1 :  With Class Binding-->
+                <small [class.d-none]="name.valid || name.untouched" class="text-danger">Name is required!</small>
+            </div>
+
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" required class="form-control" #email="ngModel" [(ngModel)]="userModel.email" name="email" [class.is-invalid]="email.invalid && email.touched">
+                <!--[ngModel] bu one way binding sağlar [(ngModel)] bu ise two way binding-->
+                <!--Bize form içinde two way binding lazım-->
+            </div>
+
+
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" required class="form-control" #phone="ngModel" [(ngModel)]="userModel.phone" name="phone" [class.is-invalid]="phone.invalid && phone.touched" pattern="^\d{10}$">
+                <!--Validation Approach 2 : With *ngIf Directive-->
+                <div *ngIf="phone.errors && (phone.invalid || phone.touched)">
+                    <small class="text-danger" *ngIf="phone.errors.required">Phone number is required!</small>
+                    <small class="text-danger" *ngIf="phone.errors.pattern">Phone number must be 10 digits!</small>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" [(ngModel)]="userModel.subscribe" name="subscribe">
+                    <label class="form-check-label">Send me promotional offers</label>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <select class="custom-select" #topic="ngModel" [(ngModel)]="userModel.topic" name="topic" [class.is-invalid]="topicHasError && topic.touched" (blur)="validateTopic(topic.value)" (change)="validateTopic(topic.value)">
+                  <option value="default" >I am interested in</option>
+                  <option *ngFor="let topic of topics">{{ topic }}</option>
+               </select>
+                <small class="text-danger" [class.d-none]="!topicHasError || topic.untouched">Please pick one !</small>
+            </div>
+            <!--      <div ngModelGroup="address">
+                <div class="form-group">
+                    <label>State</label>
+                    <input type="text" class="form-control" name="state" ngModel>
+                </div>
+                <div class="form-group">
+                    <label>City</label>
+                    <input type="text" class="form-control" name="city" ngModel>
+                </div>
+                <div class="form-group">
+                    <label>Street</label>
+                    <input type="text" class="form-control" name="street" ngModel>
+                </div>
+            </div> -->
+
+
+            <div class="form-group">
+                <label>Time Preference</label>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" name="timePreference" value="morning" [(ngModel)]="userModel.timePreference" #timePreference="ngModel" [class.is-invalid]="timePreference.invalid && timePreference.touched">
+                    <label class="form-check-label">Morning (9.00 - 12.00)</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" name="timePreference" value="evening" [(ngModel)]="userModel.timePreference" #timePreference="ngModel" [class.is-invalid]="timePreference.invalid && timePreference.touched">
+                    <label class="form-check-label">Evening (17.00 - 20.00)</label>
+                </div>
+            </div>
+            <button [disabled]="userForm.form.invalid || topicHasError" class="btn btn-primary" type="submit">Submit Form</button>
+        </form>
+    </div>
+</div>
